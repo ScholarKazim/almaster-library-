@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="mb-5 text-center">
+    <h1 class="display-5 fw-bold mb-2">سلة التخرج</h1>
+    <p class="text-secondary">تأكد من اختياراتك ومواصفات التخصيص</p>
+</div>
+
+<div id="cart-container">
+    <div class="text-center py-5 opacity-50" id="empty-cart-msg">
+        <div class="fs-1 mb-3">🎓</div>
+        <p>لم تختر أي منتج تخرج بعد.</p>
+        <a href="{{ url_for('index') }}" class="btn btn-grad-blue rounded-pill px-5 mt-2">ابدأ التجهيز الآن</a>
+    </div>
+</div>
+
+<div id="cart-summary" class="d-none mt-5">
+    <div class="p-4 rounded-5 bg-white shadow-lg mb-4 border-top border-4 border-primary">
+        <div class="d-flex justify-content-between mb-2">
+            <span class="text-muted">المجموع الفرعي</span>
+            <span id="subtotal" class="fw-bold">0 د.ع</span>
+        </div>
+        <div class="d-flex justify-content-between mb-3">
+            <span class="text-muted">رسوم التوصيل (كربلاء)</span>
+            <span class="fw-bold text-success">5,000 د.ع</span>
+        </div>
+        <hr>
+        <div class="d-flex justify-content-between fs-3 fw-bold text-dark">
+            <span>الإجمالي الكلي</span>
+            <span id="total" class="text-primary">0 د.ع</span>
+        </div>
+    </div>
+    <div class="d-grid mb-5">
+        <a href="{{ url_for('checkout') }}" class="btn btn-grad-blue btn-lg py-3 rounded-pill fw-bold shadow-lg">استكمال
+            بيانات الشحن</a>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+        const container = document.getElementById('cart-container');
+        const summary = document.getElementById('cart-summary');
+        const emptyMsg = document.getElementById('empty-cart-msg');
+
+        if (cart.length > 0) {
+            emptyMsg.classList.add('d-none');
+            summary.classList.remove('d-none');
+            renderCart(cart);
+        }
+    });
+
+    function renderCart(cart) {
+        const container = document.getElementById('cart-container');
+        // Simple visualization for MVP
+        container.innerHTML = `
+            <div class="card border-0 rounded-4 shadow-sm p-4 text-center">
+                <div class="fs-4 fw-bold mb-2 text-primary">لديك ${cart.length} منتجات في السلة</div>
+                <p class="text-secondary mb-4">يتم معالجة طلبات التخرج يدوياً لضمان أعلى جودة طباعة.</p>
+                <div class="d-grid">
+                    <button onclick="clearCart()" class="btn btn-link text-danger text-decoration-none small">تفريغ السلة تماماً</button>
+                </div>
+            </div>
+        `;
+
+        const subtotalValue = cart.length * 20000; // Mock average price
+        const totalValue = subtotalValue + 5000;
+
+        document.getElementById('subtotal').innerText = subtotalValue.toLocaleString() + " د.ع";
+        document.getElementById('total').innerText = totalValue.toLocaleString() + " د.ع";
+    }
+
+    function clearCart() {
+        localStorage.removeItem('cart');
+        location.reload();
+    }
+</script>
+{% endblock %}

@@ -1,0 +1,199 @@
+:root {
+    --bg-color: #f8fafc;
+    --text-color: #1e293b;
+    --primary-color: #1e3a8a;
+    /* Academic Blue */
+    --accent-color: #d4af37;
+    /* Graduation Gold */
+    --secondary-blue: #3b82f6;
+    --font-main: 'Tajawal', sans-serif;
+    --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --card-bg: #ffffff;
+    --safe-area-inset-bottom: env(safe-area-inset-bottom);
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: var(--font-main) !important;
+}
+
+body {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    line-height: 1.6;
+    overflow-x: hidden;
+    direction: rtl;
+    text-align: right;
+    padding-bottom: calc(90px + var(--safe-area-inset-bottom));
+    -webkit-text-size-adjust: 100%;
+    -webkit-tap-highlight-color: transparent;
+}
+
+/* Navbar - Academic Style */
+.navbar {
+    background: white !important;
+    border-bottom: 4px solid var(--primary-color);
+    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+    padding: 1rem 5% !important;
+}
+
+.brand-font {
+    color: var(--primary-color) !important;
+    font-weight: 900;
+    font-size: 1.8rem !important;
+    letter-spacing: -0.5px;
+}
+
+/* Tab Bar - Modern Blue */
+.iphone-tab-bar {
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    left: 0;
+    height: calc(75px + var(--safe-area-inset-bottom));
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    padding-bottom: var(--safe-area-inset-bottom);
+    border-top: 1px solid #e2e8f0;
+    z-index: 1000;
+}
+
+.tab-item {
+    color: #64748b;
+    text-decoration: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-size: 0.8rem;
+    font-weight: 600;
+    transition: var(--transition);
+}
+
+.tab-item.active {
+    color: var(--primary-color);
+}
+
+.tab-icon {
+    font-size: 1.5rem;
+    margin-bottom: 2px;
+}
+
+/* Product Cards */
+.product-card {
+    background: var(--card-bg);
+    border: 1px solid #e2e8f0;
+    border-radius: 20px;
+    padding: 0;
+    transition: var(--transition);
+    height: 100%;
+    overflow: hidden;
+    position: relative;
+}
+
+.product-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1);
+    border-color: var(--primary-color);
+}
+
+.year-badge {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    background: var(--accent-color);
+    color: white;
+    padding: 4px 12px;
+    border-radius: 50px;
+    font-weight: 800;
+    font-size: 0.75rem;
+    z-index: 2;
+}
+
+/* Hero Section */
+.hero-grad {
+    background: linear-gradient(135deg, var(--primary-color) 0%, #1e40af 100%);
+    color: white;
+    border-radius: 30px;
+    padding: 60px 20px;
+    margin-bottom: 40px;
+    position: relative;
+    overflow: hidden;
+}
+
+.hero-grad::after {
+    content: '🎓';
+    position: absolute;
+    left: -20px;
+    bottom: -20px;
+    font-size: 12rem;
+    opacity: 0.1;
+    transform: rotate(15deg);
+}
+
+/* Buttons */
+.btn-grad-blue {
+    background: var(--primary-color);
+    color: white;
+    padding: 12px 30px;
+    border-radius: 12px;
+    font-weight: 700;
+    border: none;
+    transition: var(--transition);
+}
+
+.btn-grad-blue:active {
+    transform: scale(0.95);
+    background: #1e40af;
+}
+
+.btn-grad-gold {
+    background: var(--accent-color);
+    color: white;
+    padding: 12px 30px;
+    border-radius: 12px;
+    font-weight: 700;
+    border: none;
+}
+
+/* Forms - iPhone Optimized */
+.form-control-grad {
+    background: #f1f5f9;
+    border: 2px solid transparent;
+    border-radius: 15px;
+    padding: 15px;
+    font-size: 16px !important;
+    transition: var(--transition);
+}
+
+.form-control-grad:focus {
+    background: white;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 4px rgba(30, 58, 138, 0.1);
+    outline: none;
+}
+
+/* Category Chips */
+.category-chip {
+    padding: 8px 18px;
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 50px;
+    color: #64748b;
+    font-weight: 600;
+    font-size: 0.9rem;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: var(--transition);
+    display: inline-block;
+}
+
+.category-chip.active {
+    background: var(--primary-color);
+    color: white;
+    border-color: var(--primary-color);
+}

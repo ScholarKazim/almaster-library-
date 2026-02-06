@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-12 col-md-7">
+        <div class="mb-5 text-center">
+            <h1 class="display-4 fw-bold mb-2">إدارة الكتب</h1>
+            <p class="text-secondary">أضف كنزاً جديداً إلى المجموعة</p>
+        </div>
+
+        <div class="bg-white p-4 rounded-5 shadow-sm border-top border-5 border-accent mb-5">
+            <form action="{{ url_for('add_product') }}" method="POST" class="mobile-form">
+                <div class="mb-4">
+                    <label class="form-label small fw-bold text-primary-cafe opacity-50">عنوان الكتاب</label>
+                    <input type="text" name="title" class="form-control border-0 bg-light py-3 rounded-4"
+                        placeholder="مثلاً: كبرياء وتحامل" required>
+                </div>
+
+                <div class="mb-4">
+                    <label class="form-label small fw-bold text-primary-cafe opacity-50">الوصف</label>
+                    <textarea name="description" rows="3" class="form-control border-0 bg-light py-3 rounded-4"
+                        placeholder="نبذة عن الطبعة أو المحتوى..." required></textarea>
+                </div>
+
+                <div class="row mb-4">
+                    <div class="col-6">
+                        <label class="form-label small fw-bold text-primary-cafe opacity-50">السعر ($)</label>
+                        <input type="number" step="0.01" name="price"
+                            class="form-control border-0 bg-light py-3 rounded-4" placeholder="99.00" required>
+                    </div>
+                    <div class="col-6">
+                        <label class="form-label small fw-bold text-primary-cafe opacity-50">المخزن</label>
+                        <input type="number" name="stock" class="form-control border-0 bg-light py-3 rounded-4"
+                            placeholder="5" required>
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    <label class="form-label small fw-bold text-primary-cafe opacity-50">التصنيف</label>
+                    <select name="category" class="form-select border-0 bg-light py-3 rounded-4">
+                        <option value="أدب كلاسيكي" selected>أدب كلاسيكي</option>
+                        <option value="نادر حديث">نادر حديث</option>
+                        <option value="فلسفة">فلسفة</option>
+                        <option value="شعر">شعر</option>
+                    </select>
+                </div>
+
+                <div class="mb-5">
+                    <label class="form-label small fw-bold text-primary-cafe opacity-50">غلاف الكتاب</label>
+                    <div class="image-upload-wrapper rounded-4 mb-3">
+                        <input type="file" name="image_file" accept="image/*" capture="environment" class="d-none"
+                            id="imageInput">
+                        <div class="upload-placeholder p-4 text-center bg-light rounded-4 border-dashed"
+                            onclick="document.getElementById('imageInput').click()">
+                            <div class="fs-1 mb-2">📸</div>
+                            <p class="small mb-0 text-muted">اضغط لالتقاط صورة أو الرفع</p>
+                        </div>
+                    </div>
+                    <input type="url" name="image_url" class="form-control border-0 bg-light py-3 rounded-4"
+                        placeholder="أو الصق رابط الصورة هنا">
+                </div>
+
+                <div class="d-grid">
+                    <button type="submit" class="btn btn-primary-cafe btn-lg py-3 rounded-pill fw-bold shadow">إضافة إلى
+                        المكتبة</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<style>
+    .border-dashed {
+        border: 2px dashed #ddd;
+    }
+
+    .text-primary-cafe {
+        color: var(--primary-color);
+    }
+</style>
+{% endblock %}
