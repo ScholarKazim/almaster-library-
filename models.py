@@ -41,7 +41,6 @@ class ProductImage(db.Model):
     can_customize_name = db.Column(db.Boolean, default=True)
     can_customize_photo = db.Column(db.Boolean, default=False)
     can_select_year = db.Column(db.Boolean, default=True)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
 class Order(db.Model):
     id = db.Column(db.Integer, primary_key=True)

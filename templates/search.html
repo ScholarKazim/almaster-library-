@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="mb-5 text-center">
+    <h1 class="display-5 fw-bold mb-2">ابحث عن تجهيزاتك</h1>
+    <p class="text-secondary">ابحث حسب الجامعة، الكلية، أو سنة التخرج</p>
+</div>
+
+<div class="mb-5">
+    <div class="p-1 rounded-pill bg-white shadow-sm border border-2 border-primary d-flex align-items-center">
+        <span class="fs-4 px-3 opacity-50">🔍</span>
+        <input type="text" class="form-control bg-transparent border-0 py-3"
+            placeholder="مثلاً: كلية الطب، جامعة كربلاء، 2026..." autofocus>
+    </div>
+</div>
+
+<div class="small fw-bold text-primary opacity-75 mb-3">البحث حسب الجامعات</div>
+<div class="d-flex flex-wrap gap-2 mb-5">
+    <span class="category-chip active">جامعة كربلاء</span>
+    <span class="category-chip">وارث الأنبياء</span>
+    <span class="category-chip">جامعة تكريت</span>
+    <span class="category-chip">جامعة بابل</span>
+</div>
+
+<div class="small fw-bold text-primary opacity-75 mb-3">الأكثر طلباً لدفعة 2026</div>
+<div class="row g-3">
+    <div class="col-12">
+        <div class="p-3 rounded-4 bg-white shadow-sm d-flex align-items-center border-start border-5 border-accent">
+            <div class="rounded-3 overflow-hidden me-3" style="width: 70px; height: 70px;">
+                <img src="https://images.unsplash.com/photo-1523050853063-bd388f675f53?auto=format&fit=crop&q=80&w=100"
+                    class="w-100 h-100 object-fit-cover">
+            </div>
+            <div>
+                <h3 class="fs-6 fw-bold text-primary mb-2">طلب خاص عبر تليكرام</h3>
+                <p class="small text-muted mb-0">تواصل مع الماستر مباشرة: ALMASTER1</p>
+            </div>
+            </a>
+        </div>
+    </div>
+    {% endblock %}
