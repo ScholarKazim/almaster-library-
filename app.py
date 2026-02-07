@@ -437,6 +437,46 @@ def search():
         return redirect(url_for('index', q=query))
     return redirect(url_for('index'))
 
+@app.route('/setup-admins')
+def setup_admins():
+    """Visit this route ONCE to create admin accounts in the cloud database"""
+    try:
+        admins_data = [
+            {"username": "AlMaster_Admin1", "phone": "07809424493", "pass": "Master@2026!#Secure1"},
+            {"username": "AlMaster_Admin2", "phone": "07713006952", "pass": "Master@2026!#Secure2"},
+            {"username": "AlMaster_Admin3", "phone": "07806126915", "pass": "Master@2026!#Secure3"},
+            {"username": "AlMaster_Admin4", "phone": "07830739188", "pass": "Master@2026!#Secure4"},
+            {"username": "AlMaster_Admin5", "phone": "07805088134", "pass": "Master@2026!#Secure5"}
+        ]
+        created = []
+        for admin_info in admins_data:
+            existing = User.query.filter_by(phone=admin_info["phone"]).first()
+            if not existing:
+                new_admin = User(
+                    username=admin_info["username"],
+                    phone=admin_info["phone"],
+                    password_hash=generate_password_hash(admin_info["pass"]),
+                    is_admin=True
+                )
+                db.session.add(new_admin)
+                created.append(admin_info["phone"])
+            elif not existing.is_admin:
+                existing.is_admin = True
+                created.append(f"{admin_info['phone']} (updated)")
+        
+        # Also create categories
+        for cat_name in ['بروشات', 'وشاحات', 'قبعات']:
+            if not Category.query.filter_by(name=cat_name).first():
+                db.session.add(Category(name=cat_name))
+        
+        db.session.commit()
+        if created:
+            return jsonify({"success": True, "message": f"Created/Updated: {created}"})
+        return jsonify({"success": True, "message": "All admins already exist!"})
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": str(e)}), 500
+
 app.secret_key = os.environ.get('SECRET_KEY', 'default_secure_key_1234')
 
 if __name__ == '__main__':
