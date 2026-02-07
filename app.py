@@ -55,7 +55,11 @@ app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024 # 16MB
 # Ensure upload directory exists
 os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 
-db.init_app(app)
+try:
+    db.init_app(app)
+except Exception as e:
+    print(f"CRITICAL: Database initialization failed: {e}")
+
 login_manager = LoginManager()
 login_manager.login_view = 'login'
 login_manager.init_app(app)
@@ -113,18 +117,23 @@ def direct_login():
     phone = data.get('phone')
     username = data.get('username')
 
-    if not phone or not username:
-        return jsonify({'error': 'جميع الحقول مطلوبة'}), 400
+    try:
+        if not phone or not username:
+            return jsonify({'error': 'جميع الحقول مطلوبة'}), 400
 
-    # Find or create user
-    user = User.query.filter_by(phone=phone).first()
-    if not user:
-        user = User(username=username, phone=phone)
-        db.session.add(user)
-        db.session.commit()
-    
-    login_user(user, remember=True)
-    return jsonify({'success': True})
+        # Find or create user
+        user = User.query.filter_by(phone=phone).first()
+        if not user:
+            user = User(username=username, phone=phone)
+            db.session.add(user)
+            db.session.commit()
+        
+        login_user(user, remember=True)
+        return jsonify({'success': True})
+    except Exception as e:
+        db.session.rollback()
+        print(f"ERROR in direct_login: {e}")
+        return jsonify({'error': 'حدث خطأ في قاعدة البيانات، يرجى المحاولة لاحقاً'}), 500
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
