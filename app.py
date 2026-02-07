@@ -45,7 +45,9 @@ def send_telegram_notification(order):
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'your-secret-key-here' # In a real app, use an environment variable
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///library.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', 'sqlite:///library.db')
+if app.config['SQLALCHEMY_DATABASE_URI'].startswith("postgres://"):
+    app.config['SQLALCHEMY_DATABASE_URI'] = app.config['SQLALCHEMY_DATABASE_URI'].replace("postgres://", "postgresql://", 1)
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['UPLOAD_FOLDER'] = 'static/uploads'
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024 # 16MB
@@ -73,6 +75,7 @@ with app.app_context():
             password_hash=generate_password_hash('admin123'),
             is_admin=True
         )
+        db.session.add(admin)
         db.session.commit()
     
     # Initialize basic categories if they don't exist
