@@ -93,6 +93,7 @@ with app.app_context():
         db.session.commit()
         print("Success: Database tables and seeders executed.")
     except Exception as e:
+        db.session.rollback()
         print(f"Database Init Error: {e}")
 
 login_manager = LoginManager()
