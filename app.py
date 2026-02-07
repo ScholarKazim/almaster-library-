@@ -13,6 +13,9 @@ from datetime import datetime
 TELEGRAM_BOT_TOKEN = "8441247700:AAEta7Yd2lDbTccy3PRWJBtb2Si6T5D5Flw"
 TELEGRAM_CHAT_ID = "369981296"
 
+# Handle Local/Production Base URL for Telegram
+BASE_URL = os.environ.get('BASE_URL', 'https://almaster-library.vercel.app')
+
 def send_telegram_notification(order):
     try:
         items_str = ""
@@ -30,7 +33,7 @@ def send_telegram_notification(order):
             f"📦 *المنتجات:* {items_str}\n\n"
             f"💰 *الإجمالي:* {order.total_price:,.0f} د.ع\n"
             f"⏰ *الوقت:* {order.created_at.strftime('%Y/%m/%d %H:%M')}\n\n"
-            f"🔗 [عرض الطلبات في الماستر](http://127.0.0.1:5000/admin/orders)"
+            f"🔗 [عرض الطلبات في الماستر]({BASE_URL}/admin/orders)"
         )
         
         url = f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendMessage"
@@ -44,7 +47,7 @@ def send_telegram_notification(order):
         print(f"Error sending Telegram notification: {e}")
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = 'your-secret-key-here' # In a real app, use an environment variable
+app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'default_secure_key_1234')
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', 'sqlite:///library.db')
 if app.config['SQLALCHEMY_DATABASE_URI'].startswith("postgres://"):
     app.config['SQLALCHEMY_DATABASE_URI'] = app.config['SQLALCHEMY_DATABASE_URI'].replace("postgres://", "postgresql://", 1)
@@ -55,38 +58,43 @@ app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024 # 16MB
 # Ensure upload directory exists
 os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 
-try:
-    db.init_app(app)
-except Exception as e:
-    print(f"CRITICAL: Database initialization failed: {e}")
+db.init_app(app)
+
+# Initialize Database for Vercel
+with app.app_context():
+    try:
+        db.create_all()
+        # Seed Admins
+        admins_data = [
+            {"username": "AlMaster_Admin1", "phone": "07809424493", "pass": "Master@2026!#Secure1"},
+            {"username": "AlMaster_Admin2", "phone": "07713006952", "pass": "Master@2026!#Secure2"},
+            {"username": "AlMaster_Admin3", "phone": "07806126915", "pass": "Master@2026!#Secure3"},
+            {"username": "AlMaster_Admin4", "phone": "07830739188", "pass": "Master@2026!#Secure4"},
+            {"username": "AlMaster_Admin5", "phone": "07805088134", "pass": "Master@2026!#Secure5"}
+        ]
+        for admin_info in admins_data:
+            if not User.query.filter_by(phone=admin_info["phone"]).first():
+                new_admin = User(
+                    username=admin_info["username"],
+                    phone=admin_info["phone"],
+                    password_hash=generate_password_hash(admin_info["pass"]),
+                    is_admin=True
+                )
+                db.session.add(new_admin)
+        
+        # Initialize Categories
+        for cat_name in ['بروشات', 'وشاحات', 'قبعات']:
+            if not Category.query.filter_by(name=cat_name).first():
+                db.session.add(Category(name=cat_name))
+        
+        db.session.commit()
+        print("Success: Database tables and seeders executed.")
+    except Exception as e:
+        print(f"Database Init Error: {e}")
 
 login_manager = LoginManager()
 login_manager.login_view = 'login'
 login_manager.init_app(app)
-
-@login_manager.user_loader
-def load_user(user_id):
-    return User.query.get(int(user_id))
-
-# Create database and initial admin if doesn't exist
-with app.app_context():
-    db.create_all()
-    if not User.query.filter_by(username='admin').first():
-        admin = User(
-            username='admin',
-            phone='07805088134',
-            email='admin@library.com',
-            password_hash=generate_password_hash('admin123'),
-            is_admin=True
-        )
-        db.session.add(admin)
-        db.session.commit()
-    
-    # Initialize basic categories if they don't exist
-    for cat_name in ['بروشات', 'وشاحات', 'قبعات']:
-        if not Category.query.filter_by(name=cat_name).first():
-            db.session.add(Category(name=cat_name))
-    db.session.commit()
 
 # Routes
 @app.route('/')
