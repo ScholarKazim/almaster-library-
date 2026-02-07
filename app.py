@@ -427,7 +427,7 @@ if __name__ == '__main__':
                 new_admin = User(
                     username=admin_info["username"],
                     phone=admin_info["phone"],
-                    password=generate_password_hash(admin_info["pass"]),
+                    password_hash=generate_password_hash(admin_info["pass"]),
                     is_admin=True
                 )
                 db.session.add(new_admin)
