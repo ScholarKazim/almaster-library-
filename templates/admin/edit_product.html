@@ -5,8 +5,8 @@
     <div class="col-12 col-md-8">
         <div class="card border-0 shadow-lg rounded-5 overflow-hidden">
             <div class="bg-grad-blue p-4 text-center text-white">
-                <h3 class="fw-bold mb-0">إضافة منتج جديد</h3>
-                <p class="small opacity-75 mt-1">أدخل تفاصيل المنتج وصورته</p>
+                <h3 class="fw-bold mb-0">تعديل المنتج</h3>
+                <p class="small opacity-75 mt-1">تحديث بيانات: {{ product.title }}</p>
             </div>
 
             <div class="card-body p-4 p-md-5">
@@ -14,14 +14,14 @@
                     <div class="mb-4">
                         <label class="form-label small fw-bold text-muted">اسم المنتج</label>
                         <input type="text" name="title" class="form-control rounded-4 shadow-sm"
-                            placeholder="مثلاً: بروش تخرج ملكي" required>
+                            value="{{ product.title }}" required>
                     </div>
 
                     <div class="row">
                         <div class="col-md-6 mb-4">
                             <label class="form-label small fw-bold text-muted">السعر (دينار عراقي)</label>
                             <input type="text" name="price" id="priceInput" class="form-control rounded-4 shadow-sm"
-                                placeholder="15,000" required>
+                                value="{{ '{:,.0f}'.format(product.price) }}" required>
                         </div>
                         <div class="col-md-6 mb-4">
                             <label class="form-label small fw-bold text-muted">القسم</label>
@@ -29,7 +29,8 @@
                                 <select name="category" id="categorySelect"
                                     class="form-select rounded-start-4 shadow-sm">
                                     {% for cat in categories %}
-                                    <option value="{{ cat.name }}">{{ cat.name }}</option>
+                                    <option value="{{ cat.name }}" {% if product.category==cat.name %}selected{% endif
+                                        %}>{{ cat.name }}</option>
                                     {% endfor %}
                                 </select>
                                 <button class="btn btn-outline-secondary rounded-end-4" type="button"
@@ -41,22 +42,34 @@
                     </div>
 
                     <div class="mb-4">
-                        <label class="form-label small fw-bold text-muted">صور المنتج (يمكنك اختيار أكثر من
-                            صورة)</label>
+                        <label class="form-label small fw-bold text-muted">إضافة صور إضافية (اختياري)</label>
                         <input type="file" name="images" class="form-control rounded-4 shadow-sm" accept="image/*"
-                            multiple required>
-                        <div class="form-text small">الصورة الأولى ستكون هي الصورة الرئيسية.</div>
+                            multiple>
+                        <div class="form-text small mt-2">يمكنك ترك هذا الحقل فارغاً إذا كنت لا تود تغيير الصور.</div>
+                    </div>
+
+                    <!-- Current Images Preview -->
+                    <div class="mb-4">
+                        <label class="form-label small fw-bold text-muted d-block">الصور الحالية</label>
+                        <div class="d-flex gap-2 overflow-auto pb-2 scroll-hide">
+                            {% for img in product.images %}
+                            <div class="position-relative rounded-3 overflow-hidden border"
+                                style="width: 80px; height: 80px; flex-shrink: 0;">
+                                <img src="{{ img.image_url }}" class="w-100 h-100 object-fit-cover">
+                            </div>
+                            {% endfor %}
+                        </div>
                     </div>
 
                     <div class="mb-5">
-                        <label class="form-label small fw-bold text-muted">وصف المنتج (اختياري)</label>
-                        <textarea name="description" class="form-control rounded-4 shadow-sm" rows="3"
-                            placeholder="اكتب تفاصيل المنتج هنا..."></textarea>
+                        <label class="form-label small fw-bold text-muted">وصف المنتج</label>
+                        <textarea name="description" class="form-control rounded-4 shadow-sm"
+                            rows="4">{{ product.description }}</textarea>
                     </div>
 
                     <div class="d-grid gap-2">
                         <button type="submit" class="btn btn-grad-blue btn-lg rounded-pill py-3 fw-bold shadow-lg">حفظ
-                            ونشر المنتج 🚀</button>
+                            التعديلات ✅</button>
                         <a href="{{ url_for('admin_products') }}"
                             class="btn btn-link text-secondary text-decoration-none">إلغاء والعودة</a>
                     </div>

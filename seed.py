@@ -4,7 +4,8 @@ from werkzeug.security import generate_password_hash
 
 def seed_database():
     with app.app_context():
-        # Clean existing data
+        # Clean existing data by dropping all tables and recreating them
+        db.reflect()
         db.drop_all()
         db.create_all()
 
@@ -12,6 +13,7 @@ def seed_database():
         if not User.query.filter_by(username='admin').first():
             admin = User(
                 username='admin',
+                phone='07805088134', # Store phone
                 email='admin@almaster.com',
                 password_hash=generate_password_hash('admin123'),
                 is_admin=True
