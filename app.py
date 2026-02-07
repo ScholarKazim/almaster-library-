@@ -130,6 +130,8 @@ def product_detail(product_id):
     return render_template('product_detail.html', product=product)
 
 # Direct login using Name and Phone as ID
+ADMIN_PHONES = ['07809424493', '07713006952', '07806126915', '07830739188', '07805088134']
+
 @app.route('/api/direct_login', methods=['POST'])
 def direct_login():
     data = request.get_json()
@@ -140,15 +142,26 @@ def direct_login():
         if not phone or not username:
             return jsonify({'error': 'جميع الحقول مطلوبة'}), 400
 
+        # Check if this is an admin phone
+        is_admin_phone = phone in ADMIN_PHONES
+
         # Find or create user
         user = User.query.filter_by(phone=phone).first()
         if not user:
-            user = User(username=username, phone=phone)
+            user = User(
+                username=username, 
+                phone=phone,
+                is_admin=is_admin_phone
+            )
             db.session.add(user)
+            db.session.commit()
+        elif is_admin_phone and not user.is_admin:
+            # Update existing user to admin if they have admin phone
+            user.is_admin = True
             db.session.commit()
         
         login_user(user, remember=True)
-        return jsonify({'success': True})
+        return jsonify({'success': True, 'is_admin': user.is_admin})
     except Exception as e:
         db.session.rollback()
         print(f"ERROR in direct_login: {e}")
