@@ -1,165 +1,0 @@
-{% extends "base.html" %}
-
-{% block content %}
-<div class="mb-5 text-center">
-    <h1 class="display-5 fw-bold mb-2">تأكيد طلب التخرج</h1>
-    <p class="text-secondary">سيتم التواصل معك هاتفياً لتأكيد التفاصيل والتوصيل</p>
-</div>
-
-<div class="row">
-    <div class="col-12 col-md-5 order-md-2 mb-5">
-        <div class="p-4 rounded-5 bg-white shadow-lg border-top border-4 border-primary">
-            <h5 class="fw-bold mb-4 text-primary">ملخص التجهيزات</h5>
-            <div id="checkout-items" class="mb-4">
-                <div class="text-center py-3">
-                    <div class="spinner-border spinner-border-sm text-primary" role="status"></div>
-                    <span class="ms-2 small">جاري تحميل الملخص...</span>
-                </div>
-            </div>
-            <hr>
-            <div class="d-flex justify-content-between fs-3 fw-bold text-dark mb-2">
-                <span>الإجمالي</span>
-                <span id="checkout-total">0 د.ع</span>
-            </div>
-            <p class="small text-success mb-0 d-flex align-items-center">
-                <span class="me-2">📦</span> توصيل آمن لباب البيت خلال 24-48 ساعة
-            </p>
-        </div>
-    </div>
-
-    <div class="col-12 col-md-7 order-md-1">
-        <form action="{{ url_for('checkout') }}" method="POST" id="checkoutForm">
-            <input type="hidden" name="cart_data" id="cartDataInput">
-
-            <div class="small fw-bold text-primary opacity-75 mb-3">بيانات المستلم (بالعربي)</div>
-            <div class="mb-4">
-                <input type="text" name="full_name" class="form-control-grad w-100" placeholder="الاسم الكامل للطالب"
-                    required pattern="^[\u0600-\u06FF\s]+$" title="يرجى إدخال الاسم باللغة العربية"
-                    value="{{ current_user.username }}">
-            </div>
-
-            <div class="mb-4">
-                <select name="province" class="form-select form-control-grad w-100" required>
-                    <option value="" disabled selected>اختر المحافظة</option>
-                    <option value="بغداد">بغداد</option>
-                    <option value="كربلاء المقدسة">كربلاء المقدسة</option>
-                    <option value="النجف الأشرف">النجف الأشرف</option>
-                    <option value="البصرة">البصرة</option>
-                    <option value="بابل">بابل</option>
-                    <option value="نينوى">نينوى</option>
-                    <option value="ذي قار">ذي قار</option>
-                    <option value="الأنبار">الأنبار</option>
-                    <option value="ديالى">ديالى</option>
-                    <option value="المثنى">المثنى</option>
-                    <option value="كركوك">كركوك</option>
-                    <option value="ميسان">ميسان</option>
-                    <option value="واسط">واسط</option>
-                    <option value="صلاح الدين">صلاح الدين</option>
-                    <option value="أربيل">أربيل</option>
-                    <option value="دهوك">دهوك</option>
-                    <option value="السليمانية">السليمانية</option>
-                </select>
-            </div>
-
-            <div class="mb-4">
-                <input type="text" name="address" class="form-control-grad w-100"
-                    placeholder="العنوان أو أقرب نقطة دالة" required pattern="^[\u0600-\u06FF\s0-9،-]+$"
-                    title="يرجى إدخال العنوان بالعربي">
-            </div>
-
-            <div class="mb-4">
-                <input type="tel" name="phone" id="phoneInput" class="form-control-grad w-100"
-                    placeholder="رقم الهاتف (مثال: 0770xxxxxxx)" required pattern="07[0-9]{9}" maxlength="11"
-                    value="{{ current_user.phone }}">
-                <div class="form-text mt-2 small text-muted">يجب أن يبدأ بـ 07 ويتكون من 11 رقماً</div>
-            </div>
-
-            <div class="small fw-bold text-primary opacity-75 mb-3 mt-5">خيارات الدفع</div>
-            <div
-                class="p-4 rounded-4 bg-white shadow-sm mb-5 d-flex align-items-center justify-content-between border-start border-5 border-success">
-                <div class="d-flex align-items-center">
-                    <span class="fs-2 me-3">🤝</span>
-                    <div>
-                        <span class="fw-bold d-block">الدفع عند الاستلام</span>
-                        <span class="small text-secondary">ادفع نقداً عند استلام طلبك</span>
-                    </div>
-                </div>
-                <div class="form-check">
-                    <input class="form-check-input" type="radio" name="payment" checked>
-                </div>
-            </div>
-
-            <div class="d-grid mb-5">
-                <button type="submit" class="btn btn-grad-blue btn-lg py-3 rounded-pill fw-bold shadow-lg">تأكيد طلب
-                    التخرج 📦</button>
-            </div>
-        </form>
-    </div>
-</div>
-
-<script>
-    let globalProducts = [];
-
-    document.addEventListener('DOMContentLoaded', async function () {
-        const cart = JSON.parse(localStorage.getItem('cart') || '[]');
-        if (cart.length === 0) {
-            window.location.href = "{{ url_for('view_cart') }}";
-            return;
-        }
-
-        document.getElementById('cartDataInput').value = JSON.stringify(cart);
-
-        try {
-            const response = await fetch('/api/get_cart_details', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ cart: cart })
-            });
-            globalProducts = await response.json();
-            renderSummary(globalProducts);
-        } catch (error) {
-            console.error('Error fetching summary:', error);
-        }
-    });
-
-    function renderSummary(items) {
-        const container = document.getElementById('checkout-items');
-        let html = '';
-        let subtotal = 0;
-
-        items.forEach(item => {
-            subtotal += item.price;
-            html += `
-                <div class="d-flex justify-content-between mb-2 small">
-                    <span class="text-secondary">${item.title}</span>
-                    <span class="fw-bold">${item.price.toLocaleString()} د.ع</span>
-                </div>
-            `;
-        });
-
-        html += `
-            <div class="d-flex justify-content-between mb-2 small border-top pt-2">
-                <span class="text-secondary">رسوم التوصيل</span>
-                <span class="fw-bold">5,000 د.ع</span>
-            </div>
-        `;
-
-        container.innerHTML = html;
-        document.getElementById('checkout-total').innerText = (subtotal + 5000).toLocaleString() + " د.ع";
-    }
-
-    document.getElementById('checkoutForm').addEventListener('submit', function (e) {
-        // We let the form submit normally to the server to save the order.
-        // The WhatsApp message can be sent manually from the profile or we can 
-        // trigger it after success if needed.
-
-        const btn = this.querySelector('button[type="submit"]');
-        btn.disabled = true;
-        btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span> جاري حفظ طلبك...';
-
-        // After save, the server redirects to profile. 
-        // The cart will be cleared on the next page load.
-        localStorage.removeItem('cart');
-    });
-</script>
-{% endblock %}
