@@ -3,42 +3,29 @@
 {% block content %}
 <div class="hero-grad text-center mb-5">
     <h1 class="display-5 fw-bold mb-3">مبارك تخرج دفعة 2026</h1>
-    <p class="lead opacity-90 mb-4">نحن هنا لنجعل لحظات تخرجكم لا تُنسى بأرقى التجهيزات والديزاينات.</p>
-    <div class="d-flex justify-content-center gap-2">
-        <a href="https://t.me/ALMASTER1" class="btn btn-light text-primary fw-bold rounded-pill px-4">
-            <span class="me-1">✈️</span> طلب خاص (تليكرام)
-        </a>
-    </div>
+    <p class="lead opacity-90 mb-0">نحن هنا لنجعل لحظات تخرجكم لا تُنسى بأرقى التجهيزات والديزاينات.</p>
 </div>
 
-<!-- Printing Service Section -->
+<!-- Search and Filter Section -->
 <div class="mb-5">
-    <div class="bg-white p-4 rounded-5 shadow-sm border overflow-hidden position-relative">
-        <div class="row align-items-center">
-            <div class="col-8">
-                <h4 class="fw-bold mb-2 text-primary">طباعة الملازم والبحوث</h4>
-                <p class="small text-muted mb-3">خدمة الطباعة بجودة عالية وتوصيل سريع لكافة المحافظات.</p>
-                <a href="{{ url_for('print_lectures') }}" class="btn btn-grad-blue btn-sm px-4 rounded-pill">ابدأ
-                    الطباعة الآن</a>
-            </div>
-            <div class="col-4 text-center">
-                <span style="font-size: 4rem;">📄</span>
-            </div>
+    <form action="{{ url_for('index') }}" method="GET" class="mb-4">
+        <div class="input-group bg-white rounded-pill shadow-sm p-1 border">
+            <input type="text" name="q" class="form-control border-0 rounded-pill px-4" placeholder="ابحث عن منتج..."
+                value="{{ search_query or '' }}">
+            <button class="btn btn-grad-blue rounded-pill px-4" type="submit">بحث</button>
         </div>
-        <div class="position-absolute"
-            style="top: -10px; left: -10px; font-size: 5rem; opacity: 0.05; transform: rotate(-15deg);">📑</div>
-    </div>
-</div>
+    </form>
 
-<!-- Category Scroll -->
-<div class="mb-5">
     <h5 class="fw-bold mb-3">الأقسام</h5>
     <div class="d-flex gap-2 overflow-auto pb-2 scroll-hide">
-        <span class="category-chip active">الكل</span>
-        <span class="category-chip">بروشات</span>
-        <span class="category-chip">وشاحات</span>
-        <span class="category-chip">قبعات</span>
-        <a href="{{ url_for('print_lectures') }}" class="text-decoration-none category-chip">طباعة ملازم</a>
+        <a href="{{ url_for('index') }}" class="text-decoration-none">
+            <span class="category-chip {% if not current_category %}active{% endif %}">الكل</span>
+        </a>
+        {% for cat in categories %}
+        <a href="{{ url_for('index', category=cat.name) }}" class="text-decoration-none">
+            <span class="category-chip {% if current_category == cat.name %}active{% endif %}">{{ cat.name }}</span>
+        </a>
+        {% endfor %}
     </div>
 </div>
 
@@ -67,18 +54,6 @@
         </div>
     </div>
     {% endfor %}
-
-    <!-- Special Request Card -->
-    <div class="col-6 col-md-4">
-        <a href="https://t.me/ALMASTER1" class="text-decoration-none">
-            <div class="product-card d-flex flex-column align-items-center justify-content-center text-center p-4 border-dashed"
-                style="height: 100%; min-height: 200px; background: rgba(30, 58, 138, 0.05);">
-                <div class="fs-1 mb-3">✨</div>
-                <h3 class="fs-6 fw-bold text-primary mb-2">طلب خاص / ديزاين خارجي</h3>
-                <p class="small text-muted mb-0">للدزاينات الخاصة تواصل معنا عبر تليكرام</p>
-            </div>
-        </a>
-    </div>
 </div>
 
 <style>

@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="text-center py-5">
+    <div class="mb-4">
+        <div class="bg-success d-inline-block p-4 rounded-circle shadow-lg text-white">
+            <span class="fs-1">✅</span>
+        </div>
+    </div>
+    <h1 class="display-5 fw-bold mb-3 text-success">شكراً لطلبكم من الماستر!</h1>
+    <p class="lead text-secondary mb-5">تم حفظ تفاصيل طلبك بنجاح تحت رقم <span class="fw-bold text-dark">#{{ order.id
+            }}</span></p>
+
+    <div class="card border-0 shadow-sm rounded-5 p-4 mx-auto mb-5" style="max-width: 500px;">
+        <h5 class="fw-bold mb-4 text-primary">ملخص الفاتورة</h5>
+        <div class="d-flex justify-content-between mb-2">
+            <span class="text-muted">المستلم:</span>
+            <span class="fw-bold">{{ order.full_name }}</span>
+        </div>
+        <div class="d-flex justify-content-between mb-3 text-end">
+            <span class="text-muted">العنوان:</span>
+            <span class="small fw-bold">{{ order.province }} - {{ order.address }}</span>
+        </div>
+        <hr>
+        <div class="d-flex justify-content-between fs-4 fw-bold">
+            <span>الإجمالي:</span>
+            <span class="text-primary">{{ "{:,.0f}".format(order.total_price) }} د.ع</span>
+        </div>
+    </div>
+
+    <div class="d-grid gap-3 mx-auto" style="max-width: 400px;">
+        <p class="text-secondary mb-3">تم إرسال طلبك للإدارة بنجاح. يمكنك متابعة حالة الطلب من خلال ملفك الشخصي.</p>
+        <a href="{{ url_for('profile') }}" class="btn btn-grad-blue btn-lg rounded-pill py-3 fw-bold shadow-lg">📦 تتبع
+            طلبي الآن</a>
+        <a href="{{ url_for('index') }}" class="btn btn-outline-secondary rounded-pill py-2">العودة للمتجر</a>
+    </div>
+</div>
+{% endblock %}
